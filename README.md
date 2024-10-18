@@ -24,7 +24,7 @@ MyGPT.py: 用于构建模型，并调用模型进行推理
 
 web.py: 用于构建网页，并调用模型进行推理
 
-config.py: 配置文件，包括模型路径、tokenizer路径等
+config.py: 配置文件
 
 .env: 配置文件，包括openai的api key等 （注意：请勿将此文件上传至github）
 
