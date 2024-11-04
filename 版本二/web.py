@@ -104,10 +104,25 @@ def fn_update_max_tokens(model, origin_set_tokens):
 
     return new_max_tokens_component
 
+import base64
+
+def get_image_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
+    
+# 指定图片路径
+local_image_path = ""
+base64_image = get_image_base64(local_image_path)
+image_html = f'''
+            <div style="display: flex; justify-content: center;">
+            <img src="data:image/png;base64,{base64_image}" width="300" height="100" style="margin-top: 20px;">
+            
+              '''
+                
 
 with gr.Blocks() as demo:
     # 标题
-    gr.Markdown("# MyQwen")
+    gr.Markdown(image_html)
     with gr.Row(equal_height=True):
         # 左侧对话栏
         with gr.Column(scale=4):
