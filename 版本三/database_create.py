@@ -36,17 +36,31 @@ class Database_create():
         docs = self.cut_chunks()
         
         embedding_fn = SentenceTransformer('/home/cdjzxy/dev_llm/ChatBot_Gradio/bce-embedding-base_v1')
-        # embedding_fn = model.DefaultEmbeddingFunction() # 默认的embeding模型 效果待评估 之前用过bge-4
-        ectors = embedding_fn.encode_documents(docs)
         vectors = embedding_fn.encode(docs, normalize_embeddings=True)
+        # embedding_fn = model.DefaultEmbeddingFunction() # 默认的embeding模型 效果待评估 之前用过bge-4
+        # ectors = embedding_fn.encode_documents(docs)
+        
         
         data = [
         {"id": i, "vector": vectors[i], "text": docs[i], "subject": "history"}
         for i in range(len(vectors))
         ]
-        client.insert(collection_name="milvus_demo", data=data)
+        if client.has_collection(collection_name="demo_collection"):
+            client.drop_collection(collection_name="demo_collection")
+        client.create_collection(
+            collection_name="demo_collection",
+            dimension=768,  # The vectors we will use in this demo has 768 dimensions
+        )
+        res = client.insert(collection_name="demo_collection", data=data)
         print("数据插入成功")
 
 if __name__ == "__main__":
-    creater = Database_create('/home/cdjzxy/dev_llm/ChatBot_Gradio/txt_files/成都交子新业科技发展有限公司服务和物资采购管理办法（试行）.txt')
-    creater.create_database()
+    # creater = Database_create('/home/cdjzxy/dev_llm/ChatBot_Gradio/txt_files/成都交子新业科技发展有限公司服务和物资采购管理办法（试行）.txt')
+    # creater.create_database()
+    res = client.query(
+    collection_name="demo_collection",
+    filter="subject == 'history'",
+    output_fields=["text", "subject"],
+)   
+    print(res[0])
+    
